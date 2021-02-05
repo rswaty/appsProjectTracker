@@ -1,0 +1,86 @@
+---
+title: "LANDFIRE team in the Apps"
+author: "The Nature Conservancy's LANDFIRE team"
+date: "2/5/2021"
+output:
+  html_document:
+    theme: yeti
+    toc: true
+    toc_float: true
+---
+
+# What this is all about 
+
+The Appalachian Region of the United States stretches from northern Alabama through Maine into Canada.  It is a region of growing importance for TNC:
+
+* received $10M dollar gift from Amazon to support forest carbon programs
+* has been selected as a North American Region Focal Place
+* has numerous National Forests
+* experiencing substantial population growth
+
+The LANDFIRE team has a long history of working in this region and with a solid number of partners there, mostly with TNC or the USFS. Because of our history there, the current excitement and the dominance (and quickly degrading condition of) fire dependant ecosystems there is a need to inventory where we are at with projects and people in the region to help us ascertain where to best contribute moving forward.
+
+
+## Methods, and a map
+
+In early 2021 TNC's LANDFIRE team captured projects we have participated in through a Google Form with results save [here](https://docs.google.com/spreadsheets/d/1LDu9Lzjq8h0ssmRnUbdpoVRse9itSiaTzNcRe5ryIt0/edit?usp=sharing).  Randy then "cleaned up" the spreadsheet, renaming some column and adding a couple.  A few notes on the spreadsheet:
+
+  * "Partner" cells are probably incomplete
+  * Completion level is a ranking from 1-5 (1 = just starting; 5 complete), then 10 (completed long long ago)
+  * Should probably add "person responsible/reporting" column
+  * "Goals" columns are confusing
+  * Lat/long is Randy's best guess
+  
+The map was made by importing Google sheet, using the lat/long to place markers in a leaflet map.  
+    
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.width=10}
+
+# get data
+library(googlesheets4)
+
+appsLFProjects <- read_sheet('https://docs.google.com/spreadsheets/d/1LDu9Lzjq8h0ssmRnUbdpoVRse9itSiaTzNcRe5ryIt0/edit?usp=sharing')
+
+
+#text for popups
+myLFtext <- paste(
+  "Project Name: ", appsLFProjects$ProjectName,"<br/>", 
+  "Main partners: ", appsLFProjects$Partner, "<br/>", 
+  "Project goals: ", appsLFProjects$CompletionLevel, "<br/>",
+  sep="") %>%
+  lapply(htmltools::HTML)
+
+# make simple map
+library(leaflet)
+lfAppsMap <-
+  leaflet(data = appsLFProjects) %>%
+  setView(-80.0275825, 37.2743013, zoom = 6) %>%
+  addTiles() %>%
+  addMarkers(lng = ~long, lat = ~lat, popup = myLFtext, label = ~ProjectName)
+
+lfAppsMap
+
+```
+
+I would like to:
+  
+* indicate level of completion by color (with "completed long long ago" in grey or something like that)
+* indicate size of project
+* link to document or website where available
+
+
+## Some observations
+
+* Almost all, if not all of these projects cover some serious ground (e.g., an entire national forest) 
+* Most are/were substantial efforts
+* As per our expertise, most work was GIS and/or modeling based; some projects involved significant writing (e.g., Wayne NF terrestrial ecosystem assessment)
+
+## Moving forward
+
+In general it seems like we are mostly working with Katy Barlow and Jean Lorbert, both are responsive and knowledgeable.  Based on Amazon gift learning about carbon modeling in SyncroSim may be a good investment.  
+
+The region is reorganizing and a experiencing "growing pains" (Randy's opinion), so coordination may take extra effort.
+
+
+
+
